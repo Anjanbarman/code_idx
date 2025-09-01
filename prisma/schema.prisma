@@ -13,20 +13,30 @@ enum UserRole {
   PREMIUM_USER
 }
 
+enum Templates {
+  REACT
+  NEXTJS
+  EXPRESS
+  VUE
+  HONO
+  ANGULAR
+}
+
 model User {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
-  name  String?
-  image String?
-  accounts Account[]
-  role UserRole @default(USER)
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  email     String     @unique
+  image     String?
+  role      UserRole   @default(USER)
+  accounts  Account[]
+  myPlayground Playground[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Account {
-  id                String  @id @default(cuid()) @map("_id")
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String  @map("user_id")
   type              String
   provider          String
@@ -43,4 +53,16 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@index([userId])
+}
+
+model Playground {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  template    Templates @default(REACT)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
