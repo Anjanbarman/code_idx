@@ -38,7 +38,7 @@ const AddRepo = () => {
           alt="Open GitHub repository"
           width={150}
           height={150}
-          className="transition-transform duration-300 group-hover:scale-110"
+          className="transition-transform duration-300 group-hover:scale-110 object-contain dark:invert"
         />
       </div>
     </div>
