@@ -17,5 +17,6 @@ export interface Project {
   updatedAt: Date;
   userId: string;
   user: User;
-  Starmark: { isMarked: boolean }[];
+  // Relation from Prisma model: Playground.starmark (favorite markers for this user when included)
+  starmark: { isMarked: boolean }[];
 }
