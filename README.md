@@ -1,36 +1,108 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# code_idx
 
-## Getting Started
+A personal Next.js + Prisma template for building authenticated playgrounds/projects with favorites (star) functionality.
 
-First, run the development server:
+This repository demonstrates a Next.js App Router app using:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js (App Router)
+- NextAuth for authentication (GitHub + Google providers configured)
+- Prisma as ORM (project uses MongoDB in some setups; adapt as needed)
+- shadcn/ui-style components and Radix UI primitives for the UI
+- Tailwind CSS for styling
+
+## Features
+
+- Email-less OAuth sign in with GitHub and Google
+- Prisma-backed models for users, accounts, playgrounds/projects, and star/favorite markers
+- CRUD for playgrounds (create, update, duplicate, delete)
+- Toggleable favorites ("Add to Favorite" / "Remove Favorite") with server-side persistence
+- Simple dashboard with a sidebar that lists starred and recent playgrounds
+
+## Quickstart (Windows / cmd.exe)
+
+Prerequisites
+
+- Node.js 18+ (or a matching version for your environment)
+- npm (or your preferred package manager)
+- A database supported by Prisma (the project has been developed with a MongoDB provider in mind; adjust steps below if you use Postgres/MySQL)
+
+1. Install dependencies
+
+```cmd
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Create environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env` file in the project root with the following variables (example values shown as placeholders):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```text
+DATABASE_URL="your-database-connection-string"
+NEXTAUTH_URL="http://localhost:3000"
+AUTH_SECRET="a-long-random-secret"
 
-## Learn More
+# GitHub OAuth
+AUTH_GITHUB_ID="your_github_client_id"
+AUTH_GITHUB_SECRET="your_github_client_secret"
 
-To learn more about Next.js, take a look at the following resources:
+# Google OAuth
+AUTH_GOOGLE_CLIENT_ID="your_google_client_id"
+AUTH_GOOGLE_CLIENT_SECRET="your_google_client_secret"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Important notes:
+- Set `NEXTAUTH_URL` to the base URL where the app will run (include protocol and port if not default).
+- Configure the OAuth redirect URLs in GitHub and Google developer consoles to match `NEXTAUTH_URL` (e.g., `http://localhost:3000/api/auth/callback/google`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. Prisma setup
 
-## Deploy on Vercel
+If you are using a SQL provider (Postgres/MySQL) with Prisma, run migrations:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```cmd
+npx prisma migrate dev --name init
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+If you are using MongoDB (the default used in some dev flows), push the Prisma schema to the database:
+
+```cmd
+npx prisma db push
+```
+
+Generate the Prisma client (needed any time `schema.prisma` changes):
+
+```cmd
+npx prisma generate
+```
+
+4. Run the development server
+
+```cmd
+npm run dev
+```
+
+Open http://localhost:3000 in your browser.
+
+## Scripts
+
+The project `package.json` includes the following scripts:
+
+- `npm run dev` — start Next.js in development (Turbopack configured)
+- `npm run build` — build the Next.js app
+- `npm run start` — start the built app
+- `npm run lint` — run ESLint
+
+## Important files & folders
+
+- `app/` — Next.js App Router routes and layouts
+- `app/(auth)` — auth-related pages/layouts
+- `app/dashboard` — protected dashboard routes and components
+- `modules/auth` — sign-in UI, user button, auth hooks
+- `modules/dashboard` — actions (server actions) and UI components for playgrounds
+- `lib/db.ts` — Prisma client singleton
+- `prisma/schema.prisma` — Prisma models (User, Account, Playground, StarMarker, etc.)
+
+
+Small PRs welcome. Prefer small, focused changes:
+- Add tests or a small demo for new components
+- Keep UI and server changes separate
